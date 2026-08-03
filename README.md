@@ -79,6 +79,11 @@ Build and start the containers:
 docker compose up --build
 ```
 
+Apply Django migrations:
+
+```bash
+docker exec django_app_backend python manage.py migrate
+```
 Access the application:
 
 * Frontend: http://localhost

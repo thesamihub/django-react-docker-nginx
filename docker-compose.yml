@@ -12,13 +12,14 @@ services:
       - .env
 
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
-    healthchecks:
+    healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8000/api/ || exit 1"]
-      intervals: 30s
+      interval: 30s
       timeout: 5s
-      restries: 5
+      retries: 5
       start_period: 30s
 
     restart: unless-stopped
@@ -34,7 +35,7 @@ services:
     
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pyour_password_here"]
-      intervals: 30s
+      interval: 30s
       timeout: 5s
       retries: 5
       start_period: 30s
@@ -59,7 +60,7 @@ services:
 
     depends_on: 
       django_app_backend:
-        condition:service_healthy
+        condition: service_healthy
 
 
   django_app_frontend:
@@ -78,4 +79,5 @@ services:
 
 volumes:
   mysql-data:
+
 
