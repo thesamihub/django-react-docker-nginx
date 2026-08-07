@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 RUN apt-get update -y && \
-	apt-get install -y gcc default-libmysqlclient-dev pkg-config && \
+	apt-get install -y curl gcc default-libmysqlclient-dev pkg-config && \
 	rm -rf /var/lib/apt/lists/*
 
 RUN pip install mysqlclient
