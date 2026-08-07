@@ -6,7 +6,6 @@ A production-ready full-stack Notes application built with **Django REST Framewo
 
 # Live Architecture
 
-![Architecture](screenshots/architecture.png)
 
 ```
                  Developer
