@@ -1,60 +1,252 @@
-# Django + React + MySQL + Nginx with Docker
+# Django + React + MySQL + Nginx | Docker | Jenkins | AWS EC2 | Amazon RDS
 
-A full-stack Notes application containerized using Docker Compose. The project consists of a Django REST API backend, a React frontend, a MySQL database, and Nginx acting as a reverse proxy.
+A production-ready full-stack Notes application built with **Django REST Framework** and **React**, containerized with **Docker**, reverse proxied with **Nginx**, deployed on **AWS EC2**, using **Amazon RDS (MySQL)** as the production database, and automated through a **Jenkins CI/CD Pipeline**.
 
-## Tech Stack
+---
 
-* **Backend:** Django, Django REST Framework
-* **Frontend:** React
-* **Database:** MySQL 8
-* **Reverse Proxy:** Nginx
-* **Containerization:** Docker & Docker Compose
+# Live Architecture
 
-## Project Architecture
+![Architecture](screenshots/architecture.png)
 
 ```
-                Browser
-                   │
-                   ▼
-              Nginx (Port 80)
-               /          \
-              /            \
-             ▼              ▼
-     React Frontend     Django Backend
-                               │
-                               ▼
-                            MySQL 8
+                 Developer
+                     │
+                     ▼
+                 GitHub Repository
+                     │
+                     ▼
+             Jenkins CI/CD Pipeline
+                     │
+      ┌──────────────┴──────────────┐
+      │                             │
+      ▼                             ▼
+ Build Docker Images          Push to Docker Hub
+      │                             │
+      └──────────────┬──────────────┘
+                     ▼
+          SSH Deployment to EC2
+                     │
+                     ▼
+             Docker Compose (Prod)
+                     │
+          ┌──────────┴──────────┐
+          ▼                     ▼
+     Django Backend         React Frontend
+             │
+             ▼
+       Amazon RDS MySQL
 ```
 
-## Features
+---
 
-* CRUD Notes API
-* React frontend consuming Django REST API
-* Reverse proxy with Nginx
-* Dockerized backend, frontend, and database
-* Persistent MySQL storage using Docker volumes
-* Environment variable support
+# Tech Stack
 
-## Project Structure
+### Backend
+
+- Django
+- Django REST Framework
+- Gunicorn
+
+### Frontend
+
+- React
+
+### Database
+
+- MySQL (Development)
+- Amazon RDS MySQL (Production)
+
+### DevOps
+
+- Docker
+- Docker Compose
+- Docker Hub
+- Jenkins
+- Nginx
+
+### Cloud
+
+- AWS EC2
+- Amazon RDS
+
+---
+
+# Features
+
+- REST API using Django REST Framework
+- React frontend
+- CRUD Notes Application
+- Dockerized backend
+- Dockerized frontend
+- Nginx Reverse Proxy
+- Docker Compose development environment
+- Docker Compose production environment
+- Production database hosted on Amazon RDS
+- Jenkins CI/CD Pipeline
+- Docker Hub image registry
+- Automated deployment to AWS EC2
+- Automatic Django migrations during deployment
+- Environment variables managed securely
+
+---
+
+# Project Structure
 
 ```
 .
 ├── api/
-├── mynotes/                 # React application
+├── mynotes/
 ├── nginx/
 │   └── nginx.conf
 ├── notesapp/
-├── Dockerfile               # Django Dockerfile
+├── screenshots/
+├── Dockerfile
 ├── docker-compose.yml
+├── docker-compose-prod.yml
+├── Jenkinsfile
 ├── requirements.txt
-└── .env.example
+├── Procfile
+├── .env.example
+└── README.md
 ```
 
-## Environment Variables
+---
 
-Create a `.env` file from `.env.example`.
+# Development Architecture
 
-Example:
+```
+Browser
+    │
+    ▼
+ Nginx (Port 80)
+     │
+ ┌───┴─────────┐
+ ▼             ▼
+React      Django API
+                 │
+                 ▼
+             MySQL Container
+```
+
+Development uses a MySQL Docker container.
+
+---
+
+# Production Architecture
+
+```
+Internet
+    │
+    ▼
+AWS EC2
+    │
+    ▼
+Nginx
+    │
+ ┌──┴─────────┐
+ ▼            ▼
+React      Django
+               │
+               ▼
+         Amazon RDS
+```
+
+Production uses:
+
+- Amazon RDS
+- Docker Hub images
+- Docker Compose Production
+- Jenkins Deployment
+
+---
+
+# CI/CD Pipeline
+
+The project is deployed automatically using Jenkins.
+
+Pipeline Flow:
+
+1. Clone source code from GitHub
+2. Build Backend Docker Image
+3. Build Frontend Docker Image
+4. Push Images to Docker Hub
+5. SSH into Production EC2
+6. Pull latest Docker Images
+7. Deploy containers using Docker Compose
+8. Run Django database migrations
+
+---
+
+# Jenkins Pipeline
+
+![Jenkins Pipeline](screenshots/jenkins-pipeline.png)
+
+---
+
+# Docker Hub Images
+
+Backend
+
+```
+thesamihub/django_app_backend
+```
+
+Frontend
+
+```
+thesamihub/django_app_frontend
+```
+
+---
+
+# Docker Hub
+
+![DockerHub](screenshots/dockerhub.png)
+
+---
+
+# Amazon RDS
+
+Production uses Amazon RDS instead of a MySQL Docker container.
+
+Benefits:
+
+- Managed database
+- Automated backups
+- High Availability
+- Better Production Architecture
+
+---
+
+# Amazon RDS
+
+![Amazon RDS](screenshots/rds.png)
+
+---
+
+# EC2 Deployment
+
+Application is hosted inside Docker containers running on AWS EC2.
+
+Services running:
+
+- Django
+- React
+- Nginx
+
+---
+
+# Docker Containers
+
+![Docker PS](screenshots/ec2-docker-ps.png)
+
+---
+
+# Environment Variables
+
+Create a `.env` file from `.env.example`
+
+Development
 
 ```env
 DB_NAME=test_db
@@ -64,92 +256,167 @@ DB_HOST=db
 DB_PORT=3306
 ```
 
-## Running the Project
+Production
 
-Clone the repository:
+```env
+DB_NAME=your_rds_database
+DB_USER=your_rds_user
+DB_PASSWORD=your_rds_password
+DB_HOST=your_rds_endpoint
+DB_PORT=3306
+SECRET_KEY=your_secret_key
+DEBUG=False
+```
+
+---
+
+# Running Locally
+
+Clone repository
 
 ```bash
 git clone https://github.com/thesamihub/django-react-docker-nginx.git
 cd django-react-docker-nginx
 ```
 
-Build and start the containers:
+Create environment file
+
+```bash
+cp .env.example .env
+```
+
+Build and start
 
 ```bash
 docker compose up --build
 ```
 
-Apply Django migrations:
+Run migrations
 
 ```bash
-docker exec django_app_backend python manage.py migrate
+docker compose exec django_app_backend python manage.py migrate
 ```
-Access the application:
 
-* Frontend: http://localhost
-* Backend API: http://localhost/api/
+Open
 
-## Docker Services
+Frontend
 
-| Service             | Description                                |
-| ------------------- | ------------------------------------------ |
-| django_app_backend  | Django REST API served with Gunicorn       |
-| django_app_frontend | React application served with Nginx        |
-| db                  | MySQL 8 database                           |
-| nginx               | Reverse proxy routing frontend and backend |
+```
+http://localhost
+```
 
-## Nginx Routing
+Backend
 
-* `/` → React Frontend
-* `/api/` → Django Backend
+```
+http://localhost/api/
+```
 
-## Useful Docker Commands
+---
 
-Build images:
+# Production Deployment
+
+Production deployment uses
+
+```
+docker-compose-prod.yml
+```
+
+The production compose file
+
+- Pulls Docker Hub images
+- Connects Django to Amazon RDS
+- Does not build locally
+- Is deployed automatically through Jenkins
+
+---
+
+# Nginx Routing
+
+```
+/
+```
+
+→ React Frontend
+
+```
+/api/
+```
+
+→ Django Backend
+
+---
+
+# Useful Docker Commands
+
+Build
 
 ```bash
 docker compose build
 ```
 
-Start containers:
+Run
 
 ```bash
 docker compose up -d
 ```
 
-Stop containers:
+Stop
 
 ```bash
 docker compose down
 ```
 
-Stop containers and remove volumes:
-
-```bash
-docker compose down -v
-```
-
-View logs:
+View Logs
 
 ```bash
 docker compose logs -f
 ```
 
-List running containers:
+Running Containers
 
 ```bash
 docker ps
 ```
 
-## Future Improvements
+---
 
-* CI/CD with GitHub Actions
-* HTTPS using Let's Encrypt
-* Kubernetes deployment
-* Docker Swarm support
-* Redis integration
+# Application
 
-## License
+![Application](screenshots/app-home.png)
 
-This project is intended for learning and DevOps practice.
+---
 
+# DevOps Skills Demonstrated
+
+- Docker
+- Docker Compose
+- Multi-container applications
+- Nginx Reverse Proxy
+- Django REST Framework
+- React
+- AWS EC2
+- Amazon RDS
+- Jenkins CI/CD
+- Docker Hub
+- Production Deployment
+- Environment Variable Management
+- SSH Deployment
+- Automated Database Migration
+
+---
+
+# Future Improvements
+
+- Kubernetes Deployment
+- HTTPS with Let's Encrypt
+- Terraform Infrastructure
+- Prometheus & Grafana Monitoring
+- Blue-Green Deployment
+- Auto Scaling Group
+- AWS Load Balancer
+
+---
+
+# License
+
+This project was built for learning, DevOps practice, and portfolio demonstration.
