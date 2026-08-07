@@ -16,17 +16,6 @@ pipeline {
                 echo 'Code cloned successfully.'
             }
         }
-
-        stage('Create Environment') {
-            steps {
-                withCredentials([file(credentialsId: 'django-prod-env', variable: 'ENV_FILE')]) {
-                    sh '''
-                        cp "$ENV_FILE" .env
-                        chmod 600 .env
-                    '''
-                }
-            }
-        }
         stage('Build Images') {
             steps {
                 echo 'Building Docker images...'
