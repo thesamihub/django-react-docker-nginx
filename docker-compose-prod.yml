@@ -1,7 +1,7 @@
 
 services:
   django_app_backend:
-    image: thesamihub/django_app_backend:latest
+    image: thesamihub/django_app_backend:${IMAGE_TAG}
 
     container_name: "django_app_backend"
 
@@ -39,7 +39,7 @@ services:
 
 
   django_app_frontend:
-    image: thesamihub/django_app_frontend:latest
+    image: thesamihub/django_app_frontend:${IMAGE_TAG}
 
     container_name: django_app_frontend
 
