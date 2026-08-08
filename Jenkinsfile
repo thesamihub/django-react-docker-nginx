@@ -65,7 +65,7 @@ pipeline {
 
                         docker compose -f docker-compose-prod.yml pull
     
-                        docker compose -f docker-compose-prod.yml up -d --remove-orphans
+                        docker compose -f docker-compose-prod.yml up -d --remove-orphans --force-recreate
     
                         docker compose -f docker-compose-prod.yml exec -T django_app_backend python manage.py migrate
                         
