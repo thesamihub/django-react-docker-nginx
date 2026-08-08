@@ -407,7 +407,6 @@ docker ps
 # Future Improvements
 
 - Kubernetes Deployment
-- HTTPS with Let's Encrypt
 - Terraform Infrastructure
 - Prometheus & Grafana Monitoring
 - Blue-Green Deployment
