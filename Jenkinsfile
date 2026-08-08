@@ -4,6 +4,7 @@ pipeline {
     
     environment {
         PROD_SERVER = "ubuntu@44.220.147.217"
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
     
     stages {
@@ -21,8 +22,8 @@ pipeline {
                 echo 'Building Docker images...'
 
                 sh '''
-                    docker build -t thesamihub/django_app_backend:latest .
-                    docker build -t thesamihub/django_app_frontend:latest ./mynotes
+                    docker build -t thesamihub/django_app_backend:$IMAGE_TAG .
+                    docker build -t thesamihub/django_app_frontend:$IMAGE_TAG ./mynotes
                 '''
 
                 echo 'Images built successfully.'
@@ -42,8 +43,8 @@ pipeline {
                     sh '''
                         echo "$HUB_PASS" | docker login -u "$HUB_USER" --password-stdin
 
-                        docker push thesamihub/django_app_backend:latest
-                        docker push thesamihub/django_app_frontend:latest
+                        docker push thesamihub/django_app_backend:$IMAGE_TAG
+                        docker push thesamihub/django_app_frontend:$IMAGE_TAG
 
                         docker logout
                     '''
@@ -63,6 +64,8 @@ pipeline {
                         
                         cd /home/ubuntu/django-react-docker-nginx
 
+                        export IMAGE_TAG = $IMAGE_TAG
+                        
                         docker compose -f docker-compose-prod.yml pull
     
                         docker compose -f docker-compose-prod.yml up -d --remove-orphans --force-recreate
